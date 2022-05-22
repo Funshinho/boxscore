@@ -1,2 +1,3 @@
-# nba-stats
-Go client to fetch NBA statistics
+# Boxscore
+
+Go client to fetch NBA statistics from https://data.nba.net
