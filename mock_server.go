@@ -7,6 +7,7 @@ import (
 	"testing"
 )
 
+// GetMockServer initializes the mock responses when calling data api
 func GetMockServer(t *testing.T) *httptest.Server {
 
 	mux := http.NewServeMux()

@@ -2,6 +2,7 @@ package boxscore
 
 import "strconv"
 
+// GetGames returns the list of games that was played from a given date
 func GetGames(date string) []Game {
 	scoreboard := GetScoreboardData(date)
 
@@ -18,6 +19,17 @@ func GetGames(date string) []Game {
 	return games
 }
 
+// GetBoxscores returns the list of boxscores that was played from a given date
+func GetBoxscores(date string) []Boxscore {
+	games := GetGames(date)
+	var boxscores []Boxscore
+	for _, g := range games {
+		boxscores = append(boxscores, getBoxscoreFromGameId(date, g.ID, g.HomeTeam, g.VistorTeam))
+	}
+	return boxscores
+}
+
+// GetBoxscore returns the boxscore of a game between two teams that was played from a given date
 func GetBoxscore(date string, homeTeam string, visitorTeam string) Boxscore {
 	games := GetGames(date)
 	var gameId string
@@ -27,6 +39,10 @@ func GetBoxscore(date string, homeTeam string, visitorTeam string) Boxscore {
 			break
 		}
 	}
+	return getBoxscoreFromGameId(date, gameId, homeTeam, visitorTeam)
+}
+
+func getBoxscoreFromGameId(date string, gameId string, homeTeam string, visitorTeam string) Boxscore {
 	boxscoreData := GetBoxscoreData(date, gameId)
 
 	statsArray := boxscoreData["stats"].(map[string]interface{})["activePlayers"].([]interface{})

@@ -9,12 +9,14 @@ import (
 
 const NBA_DATA_ENDPOINT = "https://data.nba.net/data/10s/prod/v1"
 
+// GetScoreboardData returns the scoreboard from a given date
 func GetScoreboardData(date string) map[string]interface{} {
 	endpoint := NBA_DATA_ENDPOINT + "/" + date + "/scoreboard.json"
 	scoreboard := get(endpoint)
 	return scoreboard
 }
 
+// GetBoxscoreData returns the boxscore from a given date and game identifier
 func GetBoxscoreData(date string, gameId string) map[string]interface{} {
 	endpoint := NBA_DATA_ENDPOINT + "/" + date + "/" + gameId + "_boxscore.json"
 	boxscore := get(endpoint)

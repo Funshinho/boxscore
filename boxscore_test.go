@@ -23,6 +23,22 @@ func TestGetGames(t *testing.T) {
 	assert.Equal("BOS", games[1].VistorTeam)
 }
 
+func TestGetBoxscores(t *testing.T) {
+	server := GetMockServer(t)
+	defer server.Close()
+
+	boxscores := GetBoxscores("20211225")
+	assert := assert.New(t)
+
+	assert.Equal(5, len(boxscores))
+
+	assert.Equal("NYK", boxscores[0].HomeTeam)
+	assert.Equal("ATL", boxscores[0].VistorTeam)
+	assert.Equal("MIL", boxscores[1].HomeTeam)
+	assert.Equal("BOS", boxscores[1].VistorTeam)
+
+}
+
 func TestGetBoxscore(t *testing.T) {
 	server := GetMockServer(t)
 	defer server.Close()
