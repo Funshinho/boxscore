@@ -51,6 +51,16 @@ func getBoxscoreFromGameId(date string, gameId string, homeTeam string, visitorT
 		points, _ := strconv.Atoi(s.(map[string]interface{})["points"].(string))
 		rebounds, _ := strconv.Atoi(s.(map[string]interface{})["totReb"].(string))
 		assists, _ := strconv.Atoi(s.(map[string]interface{})["assists"].(string))
+		blocks, _ := strconv.Atoi(s.(map[string]interface{})["blocks"].(string))
+		steals, _ := strconv.Atoi(s.(map[string]interface{})["steals"].(string))
+		turnovers, _ := strconv.Atoi(s.(map[string]interface{})["turnovers"].(string))
+		fouls, _ := strconv.Atoi(s.(map[string]interface{})["pFouls"].(string))
+		fgm, _ := strconv.Atoi(s.(map[string]interface{})["fgm"].(string))
+		fga, _ := strconv.Atoi(s.(map[string]interface{})["fga"].(string))
+		tpm, _ := strconv.Atoi(s.(map[string]interface{})["tpm"].(string))
+		tpa, _ := strconv.Atoi(s.(map[string]interface{})["tpa"].(string))
+		ftm, _ := strconv.Atoi(s.(map[string]interface{})["ftm"].(string))
+		fta, _ := strconv.Atoi(s.(map[string]interface{})["fta"].(string))
 		playerStats := Stats{
 			PlayerID:  s.(map[string]interface{})["personId"].(string),
 			FirstName: s.(map[string]interface{})["firstName"].(string),
@@ -59,6 +69,16 @@ func getBoxscoreFromGameId(date string, gameId string, homeTeam string, visitorT
 			Points:    points,
 			Rebounds:  rebounds,
 			Assists:   assists,
+			Blocks:    blocks,
+			Steals:    steals,
+			Turnovers: turnovers,
+			Fouls:     fouls,
+			FGM:       fgm,
+			FGA:       fga,
+			TPM:       tpm,
+			TPA:       tpa,
+			FTM:       ftm,
+			FTA:       fta,
 		}
 		stats = append(stats, playerStats)
 	}
