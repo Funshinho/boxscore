@@ -13,7 +13,7 @@ go get github.com/Funshinho/boxscore
 ### Importing
 
 ```go
- import "github.com/Funshinho/boxscore/v2"
+ import "github.com/Funshinho/boxscore"
 ```
 
 ### Usage
