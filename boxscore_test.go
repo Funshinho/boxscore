@@ -85,3 +85,37 @@ func TestGetBoxscore(t *testing.T) {
 	assert.Equal(10, player2.FTM)
 	assert.Equal(15, player2.FTA)
 }
+
+func TestGetPlayers(t *testing.T) {
+	server := GetMockServer(t)
+	defer server.Close()
+
+	players := GetPlayers("2021")
+	assert := assert.New(t)
+
+	player1 := players[0]
+	assert.Equal("Precious", player1.FirstName)
+	assert.Equal("Achiuwa", player1.LastName)
+	assert.Equal(Forward, player1.Position)
+
+	player2 := players[2]
+	assert.Equal("Bam", player2.FirstName)
+	assert.Equal("Adebayo", player2.LastName)
+	assert.Equal(Center, player2.Position)
+}
+
+func TestGetTeams(t *testing.T) {
+	server := GetMockServer(t)
+	defer server.Close()
+
+	teams := GetTeams("2021")
+	assert := assert.New(t)
+
+	team1 := teams[0]
+	assert.Equal("ATL", team1.Tricode)
+	assert.Equal("Atlanta Hawks", team1.Name)
+
+	team2 := teams[15]
+	assert.Equal("MIA", team2.Tricode)
+	assert.Equal("Miami Heat", team2.Name)
+}

@@ -17,6 +17,12 @@ func GetMockServer(t *testing.T) *httptest.Server {
 	mux.HandleFunc("boxscore.json", func(w http.ResponseWriter, req *http.Request) {
 		writeContent(t, &w, "20211225_0022100489_boxscore.json")
 	})
+	mux.HandleFunc("players.json", func(w http.ResponseWriter, req *http.Request) {
+		writeContent(t, &w, "2021_players.json")
+	})
+	mux.HandleFunc("teams.json", func(w http.ResponseWriter, req *http.Request) {
+		writeContent(t, &w, "2021_teams.json")
+	})
 
 	server := httptest.NewServer(mux)
 	return server

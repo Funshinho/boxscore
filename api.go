@@ -23,6 +23,20 @@ func GetBoxscoreData(date string, gameId string) map[string]interface{} {
 	return boxscore
 }
 
+// GetPlayersData returns the list of players for a given season (year)
+func GetPlayersData(year string) map[string]interface{} {
+	endpoint := NBA_DATA_ENDPOINT + "/" + year + "/players.json"
+	players := get(endpoint)
+	return players
+}
+
+// GetTeamsData returns the list of players for a given season (year)
+func GetTeamsData(year string) map[string]interface{} {
+	endpoint := NBA_DATA_ENDPOINT + "/" + year + "/teams.json"
+	teams := get(endpoint)
+	return teams
+}
+
 func get(endpoint string) map[string]interface{} {
 	request, _ := http.NewRequest(http.MethodGet, endpoint, nil)
 	request.Header.Add("Accept", "application/json")

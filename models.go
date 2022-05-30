@@ -4,9 +4,16 @@ type Position string
 
 const (
 	Forward Position = "F"
-	Center           = "C"
-	Guard            = "G"
+	Center  Position = "C"
+	Guard   Position = "G"
 )
+
+// Player represents the team information
+type Team struct {
+	ID      string
+	Name    string
+	Tricode string
+}
 
 // Player represents the player information
 type Player struct {

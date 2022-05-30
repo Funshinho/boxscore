@@ -29,3 +29,29 @@ func TestGetBoxscoreData(t *testing.T) {
 	assert.Equal("Antetokounmpo", result["stats"].(map[string]interface{})["activePlayers"].([]interface{})[13].(map[string]interface{})["lastName"])
 	assert.Equal("36", result["stats"].(map[string]interface{})["activePlayers"].([]interface{})[13].(map[string]interface{})["points"])
 }
+
+func TestGetPlayersData(t *testing.T) {
+	server := GetMockServer(t)
+	defer server.Close()
+
+	result := GetPlayersData("2021")
+	assert := assert.New(t)
+	assert.Equal("Precious", result["league"].(map[string]interface{})["standard"].([]interface{})[0].(map[string]interface{})["firstName"])
+	assert.Equal("Achiuwa", result["league"].(map[string]interface{})["standard"].([]interface{})[0].(map[string]interface{})["lastName"])
+
+	assert.Equal("Bam", result["league"].(map[string]interface{})["standard"].([]interface{})[2].(map[string]interface{})["firstName"])
+	assert.Equal("Adebayo", result["league"].(map[string]interface{})["standard"].([]interface{})[2].(map[string]interface{})["lastName"])
+}
+
+func TestGetTeamsData(t *testing.T) {
+	server := GetMockServer(t)
+	defer server.Close()
+
+	result := GetTeamsData("2021")
+	assert := assert.New(t)
+	assert.Equal("Atlanta Hawks", result["league"].(map[string]interface{})["standard"].([]interface{})[0].(map[string]interface{})["fullName"])
+	assert.Equal("ATL", result["league"].(map[string]interface{})["standard"].([]interface{})[0].(map[string]interface{})["tricode"])
+
+	assert.Equal("Miami Heat", result["league"].(map[string]interface{})["standard"].([]interface{})[15].(map[string]interface{})["fullName"])
+	assert.Equal("MIA", result["league"].(map[string]interface{})["standard"].([]interface{})[15].(map[string]interface{})["tricode"])
+}
