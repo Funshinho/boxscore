@@ -9,8 +9,9 @@ import (
 func TestGetGames(t *testing.T) {
 	server := GetMockServer(t)
 	defer server.Close()
+	client := NewClient(server.URL)
 
-	games := GetGames("20211225")
+	games := client.GetGames("20211225")
 	assert := assert.New(t)
 	assert.Equal(5, len(games))
 
@@ -26,8 +27,9 @@ func TestGetGames(t *testing.T) {
 func TestGetBoxscores(t *testing.T) {
 	server := GetMockServer(t)
 	defer server.Close()
+	client := NewClient(server.URL)
 
-	boxscores := GetBoxscores("20211225")
+	boxscores := client.GetBoxscores("20211225")
 	assert := assert.New(t)
 
 	assert.Equal(5, len(boxscores))
@@ -42,8 +44,9 @@ func TestGetBoxscores(t *testing.T) {
 func TestGetBoxscore(t *testing.T) {
 	server := GetMockServer(t)
 	defer server.Close()
+	client := NewClient(server.URL)
 
-	boxscore := GetBoxscore("20211225", "MIL", "BOS")
+	boxscore := client.GetBoxscore("20211225", "MIL", "BOS")
 	assert := assert.New(t)
 
 	assert.Equal("MIL", boxscore.HomeTeam)
@@ -89,8 +92,9 @@ func TestGetBoxscore(t *testing.T) {
 func TestGetPlayers(t *testing.T) {
 	server := GetMockServer(t)
 	defer server.Close()
+	client := NewClient(server.URL)
 
-	players := GetPlayers("2021")
+	players := client.GetPlayers("2021")
 	assert := assert.New(t)
 
 	player1 := players[0]
@@ -104,11 +108,31 @@ func TestGetPlayers(t *testing.T) {
 	assert.Equal(Center, player2.Position)
 }
 
+func TestGetPlayerStats(t *testing.T) {
+	server := GetMockServer(t)
+	defer server.Close()
+	client := NewClient(server.URL)
+
+	stats := client.GetPlayerStats("2021", "203507")
+	assert := assert.New(t)
+
+	assert.Equal(29.9, stats.PointsPerGame)
+	assert.Equal(11.6, stats.ReboundsPerGame)
+	assert.Equal(5.8, stats.AssistsPerGame)
+	assert.Equal(1.4, stats.BlocksPerGame)
+	assert.Equal(1.1, stats.StealsPerGame)
+	assert.Equal(3.3, stats.TurnoversPerGame)
+	assert.Equal(55.3, stats.FGP)
+	assert.Equal(29.3, stats.TPP)
+	assert.Equal(72.2, stats.FTP)
+}
+
 func TestGetTeams(t *testing.T) {
 	server := GetMockServer(t)
 	defer server.Close()
+	client := NewClient(server.URL)
 
-	teams := GetTeams("2021")
+	teams := client.GetTeams("2021")
 	assert := assert.New(t)
 
 	team1 := teams[0]

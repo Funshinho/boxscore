@@ -5,9 +5,20 @@ import (
 	"strings"
 )
 
+type Client struct {
+	ApiClient ApiClient
+}
+
+func NewClient(url ...string) Client {
+	if url == nil {
+		return Client{ApiClient: NewApiClient()}
+	}
+	return Client{ApiClient: NewApiClient(url[0])}
+}
+
 // GetGames returns the list of games that was played from a given date
-func GetGames(date string) []Game {
-	scoreboard := GetScoreboardData(date)
+func (c Client) GetGames(date string) []Game {
+	scoreboard := c.ApiClient.GetScoreboardData(date)
 
 	gamesArray := scoreboard["games"].([]interface{})
 	var games []Game
@@ -23,8 +34,8 @@ func GetGames(date string) []Game {
 }
 
 // GetBoxscores returns the list of boxscores that was played from a given date
-func GetBoxscores(date string) []Boxscore {
-	games := GetGames(date)
+func (c Client) GetBoxscores(date string) []Boxscore {
+	games := c.GetGames(date)
 	var boxscores []Boxscore
 	for _, g := range games {
 		boxscores = append(boxscores, getBoxscoreFromGameId(date, g.ID, g.HomeTeam, g.VistorTeam))
@@ -33,8 +44,8 @@ func GetBoxscores(date string) []Boxscore {
 }
 
 // GetBoxscore returns the boxscore of a game between two teams that was played from a given date
-func GetBoxscore(date string, homeTeam string, visitorTeam string) Boxscore {
-	games := GetGames(date)
+func (c Client) GetBoxscore(date string, homeTeam string, visitorTeam string) Boxscore {
+	games := c.GetGames(date)
 	var gameId string
 	for _, g := range games {
 		if g.HomeTeam == homeTeam && g.VistorTeam == visitorTeam {
@@ -46,7 +57,8 @@ func GetBoxscore(date string, homeTeam string, visitorTeam string) Boxscore {
 }
 
 func getBoxscoreFromGameId(date string, gameId string, homeTeam string, visitorTeam string) Boxscore {
-	boxscoreData := GetBoxscoreData(date, gameId)
+	client := NewApiClient()
+	boxscoreData := client.GetBoxscoreData(date, gameId)
 
 	statsArray := boxscoreData["stats"].(map[string]interface{})["activePlayers"].([]interface{})
 	var stats []Stats
@@ -94,8 +106,8 @@ func getBoxscoreFromGameId(date string, gameId string, homeTeam string, visitorT
 }
 
 // GetPlayers returns the list of players in a given season (ex 2021 for season 2021/2022)
-func GetPlayers(year string) []Player {
-	players := GetPlayersData(year)
+func (c Client) GetPlayers(year string) []Player {
+	players := c.ApiClient.GetPlayersData(year)
 	return mapPlayers(players)
 }
 
@@ -125,9 +137,50 @@ func mapPlayers(playersData map[string]interface{}) []Player {
 	return players
 }
 
+// GetPlayerStats returns the average stats of a player for the given season (ex 2021 for season 2021/2022)
+func (c Client) GetPlayerStats(year string, playerId string) AverageStats {
+	playerStatsData := c.ApiClient.GetPlayerStatsData(year, playerId)
+	stats := playerStatsData["league"].(map[string]interface{})["standard"].(map[string]interface{})["stats"].(map[string]interface{})
+	return mapStats(stats, year, playerId)
+}
+
+func mapStats(stats map[string]interface{}, year string, playerId string) AverageStats {
+	seasons := stats["regularSeason"].(map[string]interface{})["season"].([]interface{})
+	var season map[string]interface{}
+	yearf, _ := strconv.ParseFloat(year, 64)
+	for _, s := range seasons {
+		if s.(map[string]interface{})["seasonYear"].(float64) == yearf {
+			season = s.(map[string]interface{})
+			break
+		}
+	}
+	ppg, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["ppg"].(string), 64)
+	rpg, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["rpg"].(string), 64)
+	apg, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["apg"].(string), 64)
+	bpg, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["bpg"].(string), 64)
+	spg, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["spg"].(string), 64)
+	topg, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["topg"].(string), 64)
+	fgp, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["fgp"].(string), 64)
+	tpp, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["tpp"].(string), 64)
+	ftp, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["ftp"].(string), 64)
+	playerStats := AverageStats{
+		PlayerID:         playerId,
+		PointsPerGame:    ppg,
+		ReboundsPerGame:  rpg,
+		AssistsPerGame:   apg,
+		BlocksPerGame:    bpg,
+		StealsPerGame:    spg,
+		TurnoversPerGame: topg,
+		FGP:              fgp,
+		TPP:              tpp,
+		FTP:              ftp,
+	}
+	return playerStats
+}
+
 // GetTeams returns the list of players in a given season (ex 2021 for season 2021/2022)
-func GetTeams(year string) []Team {
-	teams := GetTeamsData(year)
+func (c Client) GetTeams(year string) []Team {
+	teams := c.ApiClient.GetTeamsData(year)
 	return mapTeams(teams)
 }
 

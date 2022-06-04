@@ -45,6 +45,19 @@ type Stats struct {
 	FTA       int // Free throw attempted
 }
 
+type AverageStats struct {
+	PlayerID         string
+	PointsPerGame    float64
+	ReboundsPerGame  float64
+	AssistsPerGame   float64
+	BlocksPerGame    float64
+	StealsPerGame    float64
+	TurnoversPerGame float64
+	FGP              float64 // Field goal percentage
+	TPP              float64 // Three points percentage
+	FTP              float64 // Free throw percentage
+}
+
 // Boxscore represents the boxscore of a game
 type Boxscore struct {
 	HomeTeam   string

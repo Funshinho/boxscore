@@ -4,27 +4,30 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
 // GetMockServer initializes the mock responses when calling data api
 func GetMockServer(t *testing.T) *httptest.Server {
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("scoreboard.json", func(w http.ResponseWriter, req *http.Request) {
-		writeContent(t, &w, "20211225_scoreboard.json")
-	})
-	mux.HandleFunc("boxscore.json", func(w http.ResponseWriter, req *http.Request) {
-		writeContent(t, &w, "20211225_0022100489_boxscore.json")
-	})
-	mux.HandleFunc("players.json", func(w http.ResponseWriter, req *http.Request) {
-		writeContent(t, &w, "2021_players.json")
-	})
-	mux.HandleFunc("teams.json", func(w http.ResponseWriter, req *http.Request) {
-		writeContent(t, &w, "2021_teams.json")
-	})
-
-	server := httptest.NewServer(mux)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if strings.Contains(req.URL.Path, "scoreboard.json") {
+			writeContent(t, &w, "20211225_scoreboard.json")
+		}
+		if strings.Contains(req.URL.Path, "boxscore.json") {
+			writeContent(t, &w, "20211225_0022100489_boxscore.json")
+		}
+		if strings.Contains(req.URL.Path, "players.json") {
+			writeContent(t, &w, "2021_players.json")
+		}
+		if strings.Contains(req.URL.Path, "teams.json") {
+			writeContent(t, &w, "2021_teams.json")
+		}
+		if strings.Contains(req.URL.Path, "profile.json") {
+			writeContent(t, &w, "203507_profile.json")
+		}
+	}))
 	return server
 }
 
