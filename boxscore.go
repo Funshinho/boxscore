@@ -157,7 +157,7 @@ func mapPlayers(playersData map[string]interface{}) []Player {
 // GetPlayerStats returns the average stats of a player for the given season (ex 2021 for season 2021/2022)
 func (c Client) GetPlayerStats(year string, playerId string) (AverageStats, error) {
 	playerStatsData, err := c.ApiClient.GetPlayerStatsData(year, playerId)
-	if err != nil {
+	if playerStatsData == nil || err != nil {
 		return AverageStats{}, err
 	}
 	stats := playerStatsData["league"].(map[string]interface{})["standard"].(map[string]interface{})["stats"].(map[string]interface{})
