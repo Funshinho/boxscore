@@ -17,9 +17,11 @@ func NewClient(url ...string) Client {
 }
 
 // GetGames returns the list of games that was played from a given date
-func (c Client) GetGames(date string) []Game {
-	scoreboard := c.ApiClient.GetScoreboardData(date)
-
+func (c Client) GetGames(date string) ([]Game, error) {
+	scoreboard, err := c.ApiClient.GetScoreboardData(date)
+	if err != nil {
+		return []Game{}, err
+	}
 	gamesArray := scoreboard["games"].([]interface{})
 	var games []Game
 	for _, g := range gamesArray {
@@ -30,22 +32,32 @@ func (c Client) GetGames(date string) []Game {
 		}
 		games = append(games, game)
 	}
-	return games
+	return games, nil
 }
 
 // GetBoxscores returns the list of boxscores that was played from a given date
-func (c Client) GetBoxscores(date string) []Boxscore {
-	games := c.GetGames(date)
+func (c Client) GetBoxscores(date string) ([]Boxscore, error) {
+	games, err := c.GetGames(date)
+	if err != nil {
+		return []Boxscore{}, err
+	}
 	var boxscores []Boxscore
 	for _, g := range games {
-		boxscores = append(boxscores, getBoxscoreFromGameId(date, g.ID, g.HomeTeam, g.VistorTeam))
+		boxscore, err := getBoxscoreFromGameId(date, g.ID, g.HomeTeam, g.VistorTeam)
+		if err != nil {
+			return []Boxscore{}, err
+		}
+		boxscores = append(boxscores, boxscore)
 	}
-	return boxscores
+	return boxscores, nil
 }
 
 // GetBoxscore returns the boxscore of a game between two teams that was played from a given date
-func (c Client) GetBoxscore(date string, homeTeam string, visitorTeam string) Boxscore {
-	games := c.GetGames(date)
+func (c Client) GetBoxscore(date string, homeTeam string, visitorTeam string) (Boxscore, error) {
+	games, err := c.GetGames(date)
+	if err != nil {
+		return Boxscore{}, err
+	}
 	var gameId string
 	for _, g := range games {
 		if g.HomeTeam == homeTeam && g.VistorTeam == visitorTeam {
@@ -56,10 +68,12 @@ func (c Client) GetBoxscore(date string, homeTeam string, visitorTeam string) Bo
 	return getBoxscoreFromGameId(date, gameId, homeTeam, visitorTeam)
 }
 
-func getBoxscoreFromGameId(date string, gameId string, homeTeam string, visitorTeam string) Boxscore {
+func getBoxscoreFromGameId(date string, gameId string, homeTeam string, visitorTeam string) (Boxscore, error) {
 	client := NewApiClient()
-	boxscoreData := client.GetBoxscoreData(date, gameId)
-
+	boxscoreData, err := client.GetBoxscoreData(date, gameId)
+	if err != nil {
+		return Boxscore{}, err
+	}
 	statsArray := boxscoreData["stats"].(map[string]interface{})["activePlayers"].([]interface{})
 	var stats []Stats
 	for _, s := range statsArray {
@@ -102,13 +116,16 @@ func getBoxscoreFromGameId(date string, gameId string, homeTeam string, visitorT
 		VistorTeam: visitorTeam,
 		StatsList:  stats,
 	}
-	return boxscore
+	return boxscore, nil
 }
 
 // GetPlayers returns the list of players in a given season (ex 2021 for season 2021/2022)
-func (c Client) GetPlayers(year string) []Player {
-	players := c.ApiClient.GetPlayersData(year)
-	return mapPlayers(players)
+func (c Client) GetPlayers(year string) ([]Player, error) {
+	players, err := c.ApiClient.GetPlayersData(year)
+	if err != nil {
+		return []Player{}, err
+	}
+	return mapPlayers(players), nil
 }
 
 func mapPlayers(playersData map[string]interface{}) []Player {
@@ -138,10 +155,13 @@ func mapPlayers(playersData map[string]interface{}) []Player {
 }
 
 // GetPlayerStats returns the average stats of a player for the given season (ex 2021 for season 2021/2022)
-func (c Client) GetPlayerStats(year string, playerId string) AverageStats {
-	playerStatsData := c.ApiClient.GetPlayerStatsData(year, playerId)
+func (c Client) GetPlayerStats(year string, playerId string) (AverageStats, error) {
+	playerStatsData, err := c.ApiClient.GetPlayerStatsData(year, playerId)
+	if err != nil {
+		return AverageStats{}, err
+	}
 	stats := playerStatsData["league"].(map[string]interface{})["standard"].(map[string]interface{})["stats"].(map[string]interface{})
-	return mapStats(stats, year, playerId)
+	return mapStats(stats, year, playerId), nil
 }
 
 func mapStats(stats map[string]interface{}, year string, playerId string) AverageStats {
@@ -193,9 +213,12 @@ func mapStats(stats map[string]interface{}, year string, playerId string) Averag
 }
 
 // GetTeams returns the list of players in a given season (ex 2021 for season 2021/2022)
-func (c Client) GetTeams(year string) []Team {
-	teams := c.ApiClient.GetTeamsData(year)
-	return mapTeams(teams)
+func (c Client) GetTeams(year string) ([]Team, error) {
+	teams, err := c.ApiClient.GetTeamsData(year)
+	if err != nil {
+		return []Team{}, err
+	}
+	return mapTeams(teams), nil
 }
 
 func mapTeams(teamsData map[string]interface{}) []Team {

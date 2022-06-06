@@ -11,7 +11,7 @@ func TestGetGames(t *testing.T) {
 	defer server.Close()
 	client := NewClient(server.URL)
 
-	games := client.GetGames("20211225")
+	games, _ := client.GetGames("20211225")
 	assert := assert.New(t)
 	assert.Equal(5, len(games))
 
@@ -29,7 +29,7 @@ func TestGetBoxscores(t *testing.T) {
 	defer server.Close()
 	client := NewClient(server.URL)
 
-	boxscores := client.GetBoxscores("20211225")
+	boxscores, _ := client.GetBoxscores("20211225")
 	assert := assert.New(t)
 
 	assert.Equal(5, len(boxscores))
@@ -46,7 +46,7 @@ func TestGetBoxscore(t *testing.T) {
 	defer server.Close()
 	client := NewClient(server.URL)
 
-	boxscore := client.GetBoxscore("20211225", "MIL", "BOS")
+	boxscore, _ := client.GetBoxscore("20211225", "MIL", "BOS")
 	assert := assert.New(t)
 
 	assert.Equal("MIL", boxscore.HomeTeam)
@@ -94,7 +94,7 @@ func TestGetPlayers(t *testing.T) {
 	defer server.Close()
 	client := NewClient(server.URL)
 
-	players := client.GetPlayers("2021")
+	players, _ := client.GetPlayers("2021")
 	assert := assert.New(t)
 
 	player1 := players[0]
@@ -113,7 +113,7 @@ func TestGetPlayerStats(t *testing.T) {
 	defer server.Close()
 	client := NewClient(server.URL)
 
-	stats := client.GetPlayerStats("2021", "203507")
+	stats, _ := client.GetPlayerStats("2021", "203507")
 	assert := assert.New(t)
 
 	assert.Equal(29.9, stats.PointsPerGame)
@@ -132,7 +132,7 @@ func TestGetTeams(t *testing.T) {
 	defer server.Close()
 	client := NewClient(server.URL)
 
-	teams := client.GetTeams("2021")
+	teams, _ := client.GetTeams("2021")
 	assert := assert.New(t)
 
 	team1 := teams[0]
