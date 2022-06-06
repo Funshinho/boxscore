@@ -154,6 +154,20 @@ func mapStats(stats map[string]interface{}, year string, playerId string) Averag
 			break
 		}
 	}
+	if season == nil {
+		return AverageStats{
+			PlayerID:         playerId,
+			PointsPerGame:    0,
+			ReboundsPerGame:  0,
+			AssistsPerGame:   0,
+			BlocksPerGame:    0,
+			StealsPerGame:    0,
+			TurnoversPerGame: 0,
+			FGP:              0,
+			TPP:              0,
+			FTP:              0,
+		}
+	}
 	ppg, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["ppg"].(string), 64)
 	rpg, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["rpg"].(string), 64)
 	apg, _ := strconv.ParseFloat(season["total"].(map[string]interface{})["apg"].(string), 64)
