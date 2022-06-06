@@ -87,7 +87,7 @@ func get(endpoint string) map[string]interface{} {
 	client := &http.Client{}
 
 	response, err := client.Do(request)
-	if err != nil {
+	if response.StatusCode != http.StatusOK || err != nil {
 		log.Println(err)
 		return nil
 	}
