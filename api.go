@@ -3,9 +3,9 @@ package boxscore
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 const NBA_DATA_ENDPOINT = "https://data.nba.net/data/10s/prod/v1"
@@ -84,23 +84,17 @@ func (c ApiClient) GetTeamsData(year string) (map[string]interface{}, error) {
 func get(endpoint string) map[string]interface{} {
 	request, _ := http.NewRequest(http.MethodGet, endpoint, nil)
 	request.Header.Add("Accept", "application/json")
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
 
 	response, err := client.Do(request)
 	if response.StatusCode != http.StatusOK || err != nil {
 		log.Println(err)
 		return nil
 	}
-
-	content, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
 	defer response.Body.Close()
+
 	data := make(map[string]interface{})
-	err = json.Unmarshal(content, &data)
+	err = json.NewDecoder(response.Body).Decode(&data)
 	if err != nil {
 		log.Println(err)
 		return nil
